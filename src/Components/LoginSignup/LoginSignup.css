@@ -37,6 +37,7 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
+    border-radius: 30px;
 
 }
 
@@ -47,7 +48,7 @@
     width:480px;
     height: 80px;
     background: #eaeaea;
-    border-radius: 6px;
+    border-radius: 50px;
 
 }
 
@@ -64,6 +65,7 @@
     font-size: 19px;
     outline: none;
     color: #797979;
+    border-radius: 30px;
 }
 
 .forgot-password{
@@ -94,7 +96,7 @@
     height: 59px;
     color: #fff;
     background: #4c00b4;
-    border-radius: 50px;
+    border-radius: 60px;
     font-size: 19px;
     font-weight: 700;
     cursor: pointer;
@@ -103,4 +105,28 @@
 .gray{
     background: #EAEAEA;
     color: #676767;
+}
+
+.Submits {
+  display: flex;
+  justify-content: center; /* centers button horizontally */
+  align-items: center;     /* centers vertically (if div has height) */
+}
+
+.Submits button {
+  width: 200px;
+  height: 60px;
+  background-color: rgb(187, 173, 173);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 50px;
+  font-size: 18px;
+}
+
+.Submits button:hover {
+  background-color: #1b1ea1;
 }
