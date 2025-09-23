@@ -5,6 +5,8 @@ import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/password.png';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'sonner';
+
 
 const LoginSignup = () => {
   const [action, setAction] = useState("Login");
@@ -13,21 +15,36 @@ const LoginSignup = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+  const data = { email, password };
     try {
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        {
-          email,
-          password,
-          action,
-        }
-      );
+      const response = await login(data);
+      toast.success("Successfully logged in!");
+      navigate('/dashboard'); // Redirect to dashboard on successful login
       console.log("Response from server:", response.data);
     } catch (error) {
       console.error("Error:", error);
-    }
-  };
+      toast.error("Login failed. Please check your credentials.");
 
+    }
+    
+  };
+  const login = async (data) => {
+         const res = await fetch("http://localhost:5148/api/Auth/login", {
+
+      method: "POST",
+
+      headers: {
+
+        "Content-Type": "application/json",
+
+      },
+
+      body: JSON.stringify(data),
+
+    });
+    return res.json();
+  }
+ 
   return (
     <div className='container'>
       <div className='header'>
@@ -86,6 +103,7 @@ const LoginSignup = () => {
           </div>
         )}
       </div>
+      <Toaster position="top-right" richColors />
     </div>
   );
 };
