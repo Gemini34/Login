@@ -3,48 +3,106 @@ import './LoginSignup.css';
 import user_icon from '../Assets/person.png';
 import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/password.png';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 
-
 const LoginSignup = () => {
-  const [action, setAction] = useState("Login");
+  const [action, setAction] = useState("Login"); // "Login" or "Sign Up"
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-  const data = { email, password };
-    try {
-      const response = await login(data);
-      toast.success("Successfully logged in!");
-      navigate('/dashboard'); // Redirect to dashboard on successful login
-      console.log("Response from server:", response.data);
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Login failed. Please check your credentials.");
-
-    }
-    
-  };
+  // Login API call
   const login = async (data) => {
-         const res = await fetch("http://localhost:5148/api/Auth/login", {
-
+    const res = await fetch("https://dummyjson.com/test", {
       method: "POST",
-
-      headers: {
-
-        "Content-Type": "application/json",
-
-      },
-
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-
     });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Login failed");
+    }
     return res.json();
-  }
- 
+  };
+
+  // Register API call
+  const signUp = async (data) => {
+    const res = await fetch("https://dummyjson.com/test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Sign Up failed");
+    }
+
+    const response = await res.json();
+    toast.success("Successfully registered!");
+    console.log("Sign Up Response:", response);
+    return response;
+  };
+
+  // Handle submit for both Login and Sign Up
+  const handleSubmit = async () => {
+    if (action === "Sign Up") {
+      // Validate Sign Up fields
+      if (!firstName || !lastName || !email || !password) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+
+      const signUpData = { firstName, lastName, email, password };
+      setLoading(true);
+      try {
+        await signUp(signUpData);
+        
+        setAction("Login");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+      } catch (error) {
+        console.error("Sign Up Error:", error);
+        toast.error(error.message || "Sign Up failed");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Login logic
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const loginData = { email, password };
+      const response = await login(loginData);
+
+      toast.success("Successfully logged in!");
+      if (response?.accessToken) {
+        localStorage.setItem("authToken", response.accessToken);
+      }
+
+      navigate("/dashboard");
+      console.log("Login Response:", response);
+    } catch (error) {
+      console.error("Login Error:", error);
+      toast.error(error.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='container'>
       <div className='header'>
@@ -53,6 +111,28 @@ const LoginSignup = () => {
       </div>
 
       <div className='inputs'>
+        {action === "Sign Up" && (
+          <>
+            <div className="input">
+              <img src={user_icon} alt="" />
+              <input
+                type="text"
+                placeholder='First Name'
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div className="input">
+              <img src={user_icon} alt="" />
+              <input
+                type="text"
+                placeholder='Last Name'
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </>
+        )}
         <div className='input'>
           <img src={email_icon} alt="" />
           <input
@@ -74,27 +154,29 @@ const LoginSignup = () => {
       </div>
 
       <div className="Submits">
-        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={handleSubmit} disabled={loading}>
+          {loading
+            ? action === "Login"
+              ? "Logging in..."
+              : "Submitting..."
+            : "Submit"}
+        </button>
       </div>
 
-      {/* Forgot Password link */}
       {action === "Login" && (
         <div className="forgot-password">
           Forgot Password?{" "}
-          <span
-            style={{ cursor: 'pointer' }}
-            onClick={() => navigate('/forgot-password')}
-          >
+          <span style={{ cursor: 'pointer' }} onClick={() => navigate('/forgot-password')}>
             Click Here
           </span>
         </div>
       )}
 
-      {/* Toggle buttons */}
+      {/* Toggle between Login / Sign Up */}
       <div className="submit-container">
         {action !== "Sign Up" && (
           <div className="submit" onClick={() => setAction("Sign Up")}>
-            SignUp
+            Sign Up
           </div>
         )}
         {action !== "Login" && (
@@ -103,6 +185,7 @@ const LoginSignup = () => {
           </div>
         )}
       </div>
+
       <Toaster position="top-right" richColors />
     </div>
   );
