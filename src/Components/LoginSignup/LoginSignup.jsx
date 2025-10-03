@@ -17,7 +17,7 @@ const LoginSignup = () => {
 
   // Login API call
   const login = async (data) => {
-    const res = await fetch("https://dummyjson.com/test", {
+    const res = await fetch("http://localhost:5148/api/Auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -32,7 +32,7 @@ const LoginSignup = () => {
 
   // Register API call
   const signUp = async (data) => {
-    const res = await fetch("https://dummyjson.com/test", {
+    const res = await fetch("http://localhost:5148/api/Auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

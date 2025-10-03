@@ -6,6 +6,7 @@ import ResetPassword from './Components/LoginSignup/ResetPassword';
 import Dashboard from './Pages/Dashboard';
 
 
+
 function App() {
   return (
     <Router>
@@ -14,6 +15,8 @@ function App() {
          <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/login" element={<LoginSignup />} />
+        
       </Routes>
     </Router>
   );
